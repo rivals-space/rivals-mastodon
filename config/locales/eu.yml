@@ -391,7 +391,6 @@ eu:
         hint: Domeinuaren blokeoak ez du eragotziko kontuen sarrerak sortzea datu-basean, baina automatikoki ezarriko zaizkie moderazio metodo bereziak iraganeko mezuetan ere.
         severity:
           noop: Bat ere ez
-          silence: Isilarazi
           suspend: Kanporatu
         title: Domeinuaren blokeo berria
       obfuscate: Lausotu domeinu-izena
