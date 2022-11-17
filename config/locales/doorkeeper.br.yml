@@ -20,7 +20,7 @@ br:
         authorize: Aotren
         cancel: Nullañ
         destroy: Distrujañ
-        edit: Kemmañ
+        edit: Aozañ
         submit: Kas
       confirmations:
         destroy: Ha sur oc'h ?
@@ -104,7 +104,7 @@ br:
         lists: Listennoù
         mutes: Kuzhet
         search: Klask
-        statuses: Toudoù
+        statuses: Kannadoù
     layouts:
       admin:
         nav:
