@@ -285,7 +285,7 @@ sv:
         update_ip_block_html: "%{name} ändrade regel för IP %{target}"
         update_status_html: "%{name} uppdaterade inlägget av %{target}"
         update_user_role_html: "%{name} ändrade rollen %{target}"
-      deleted_account: raderat konto deleted account
+      deleted_account: raderat konto
       empty: Inga loggar hittades.
       filter_by_action: Filtrera efter åtgärd
       filter_by_user: Filtrera efter användare
