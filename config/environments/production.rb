@@ -138,7 +138,7 @@ Rails.application.configure do
     'X-Content-Type-Options' => 'nosniff',
     'X-XSS-Protection'       => '0',
     'Permissions-Policy'     => 'interest-cohort=()',
-    'Referrer-Policy'        => 'same-origin',
+    'Referrer-Policy'        => 'no-referrer',
   }
 
   config.x.otp_secret = ENV.fetch('OTP_SECRET')
