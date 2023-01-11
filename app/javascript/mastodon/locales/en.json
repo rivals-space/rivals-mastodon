@@ -11,6 +11,7 @@
   "about.not_available": "This information has not been made available on this server.",
   "about.powered_by": "Decentralized social media powered by {mastodon}",
   "about.rules": "Server rules",
+  "about.support_rivals": "Support rivals.space",
   "account.account_note_header": "Note",
   "account.add_or_remove_from_list": "Add or Remove from lists",
   "account.badges.bot": "Bot",
