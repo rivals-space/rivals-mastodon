@@ -2,12 +2,12 @@ name: Build & Push rivals fork
 on:
   push:
     branches:
-      - 'prod'
+      - 'main'
     tags:
       - '*'
   pull_request:
     branches:
-      - 'prod'
+      - 'main'
 jobs:
   docker:
     runs-on: ubuntu-latest
