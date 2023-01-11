@@ -72,6 +72,8 @@ class LinkFooter extends React.PureComponent {
           )}
           {' · '}
           <Link key='privacy-policy' to='/privacy-policy'><FormattedMessage id='footer.privacy_policy' defaultMessage='Privacy policy' /></Link>
+          {' '}
+          <a href='https://www.patreon.com/rivalsspace' target='_blank'><FormattedMessage id='about.support_rivals' defaultMessage='Support rivals.space' /></a>
         </p>
 
         <p>
@@ -88,11 +90,6 @@ class LinkFooter extends React.PureComponent {
           v{version}
         </p>
 
-        <p>
-          <strong>rivals.space</strong>:
-          {' '}
-          <a href='https://www.patreon.com/rivalsspace' target='_blank'><FormattedMessage id='about.support_rivals' defaultMessage='Support rivals.space' /></a>
-        </p>
       </div>
     );
   }
