@@ -21,7 +21,7 @@ module Mastodon
     end
 
     def suffix
-      ''
+      '+rivals'
     end
 
     def to_a
@@ -33,7 +33,7 @@ module Mastodon
     end
 
     def repository
-      ENV.fetch('GITHUB_REPOSITORY', 'mastodon/mastodon')
+      ENV.fetch('GITHUB_REPOSITORY', 'rivals-space/rivals-mastodon')
     end
 
     def source_base_url
