@@ -142,7 +142,7 @@ namespace :mastodon do
       prompt.say "\n"
 
       if prompt.yes?('Do you want to store uploaded files on the cloud?', default: false)
-        case prompt.select('Provider', ['DigitalOcean Spaces', 'Amazon S3', 'Wasabi', 'Minio', 'Google Cloud Storage', 'Storj DCS'])
+        case prompt.select('Provider', ['DigitalOcean Spaces', 'Amazon S3', 'Wasabi', 'Minio', 'Google Cloud Storage'])
         when 'DigitalOcean Spaces'
           env['S3_ENABLED'] = 'true'
           env['S3_PROTOCOL'] = 'https'
@@ -257,42 +257,6 @@ namespace :mastodon do
             q.required true
             q.modify :strip
           end
-        when 'Storj DCS'
-          env['S3_ENABLED']  = 'true'
-          env['S3_PROTOCOL'] = 'https'
-          env['S3_REGION']   = 'global'
-
-          env['S3_ENDPOINT'] = prompt.ask('Storj DCS endpoint URL:') do |q|
-            q.required true
-            q.default "https://gateway.storjshare.io"
-            q.modify :strip
-          end
-
-          env['S3_PROTOCOL'] = env['S3_ENDPOINT'].start_with?('https') ? 'https' : 'http'
-          env['S3_HOSTNAME'] = env['S3_ENDPOINT'].gsub(/\Ahttps?:\/\//, '')
-
-          env['S3_BUCKET'] = prompt.ask('Storj DCS bucket name:') do |q|
-            q.required true
-            q.default "files.#{env['LOCAL_DOMAIN']}"
-            q.modify :strip
-          end
-
-          env['AWS_ACCESS_KEY_ID'] = prompt.ask('Storj Gateway access key (uplink share --register --readonly=false --not-after=none sj://bucket):') do |q|
-            q.required true
-            q.modify :strip
-          end
-
-          env['AWS_SECRET_ACCESS_KEY'] = prompt.ask('Storj Gateway secret key:') do |q|
-            q.required true
-            q.modify :strip
-          end
-          
-          linksharing_access_key = prompt.ask('Storj Linksharing access key (uplink share --register --public --readonly=true --disallow-lists --not-after=none sj://bucket):') do |q|
-            q.required true
-            q.modify :strip
-          end
-          env['S3_ALIAS_HOST'] = "link.storjshare.io/raw/#{linksharing_access_key}/#{env['S3_BUCKET']}"
-          
         when 'Google Cloud Storage'
           env['S3_ENABLED']             = 'true'
           env['S3_PROTOCOL']            = 'https'
@@ -435,7 +399,7 @@ namespace :mastodon do
           escaped = dotenv_escape(value)
           incompatible_syntax = true if value != escaped
 
-          "#{key}=#{escaped}"
+          escaped
         end.join("\n")
 
         generated_header = "# Generated with mastodon:setup on #{Time.now.utc}\n\n".dup
@@ -463,10 +427,10 @@ namespace :mastodon do
           prompt.say 'Running `RAILS_ENV=production rails db:setup` ...'
           prompt.say "\n\n"
 
-          if system(env.transform_values(&:to_s).merge({ 'RAILS_ENV' => 'production', 'SAFETY_ASSURED' => '1' }), 'rails db:setup')
-            prompt.ok 'Done!'
-          else
+          if !system(env.transform_values(&:to_s).merge({ 'RAILS_ENV' => 'production', 'SAFETY_ASSURED' => '1' }), 'rails db:setup')
             prompt.error 'That failed! Perhaps your configuration is not right'
+          else
+            prompt.ok 'Done!'
           end
         end
 
@@ -479,10 +443,10 @@ namespace :mastodon do
             prompt.say 'Running `RAILS_ENV=production rails assets:precompile` ...'
             prompt.say "\n\n"
 
-            if system(env.transform_values(&:to_s).merge({ 'RAILS_ENV' => 'production' }), 'rails assets:precompile')
-              prompt.say 'Done!'
-            else
+            if !system(env.transform_values(&:to_s).merge({ 'RAILS_ENV' => 'production' }), 'rails assets:precompile')
               prompt.error 'That failed! Maybe you need swap space?'
+            else
+              prompt.say 'Done!'
             end
           end
         end
