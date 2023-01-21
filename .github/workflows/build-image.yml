@@ -43,7 +43,6 @@ jobs:
           context: .
           target: prod
           platforms: linux/amd64
-          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta_mastodon.outputs.tags }}
           labels: ${{ steps.meta_mastodon.outputs.labels }}
           cache-from: type=gha
@@ -54,10 +53,9 @@ jobs:
           context: .
           file: .docker/nginx/Dockerfile
           build-args: |
-            MASTODON_CONTAINER: ${{ steps.meta_mastodon.outputs.tags }}
+            MASTODON_CONTAINER=${{ steps.meta_mastodon.outputs.tags }}
           target: nginx
           platforms: linux/amd64
-          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta_nginx.outputs.tags }}
           labels: ${{ steps.meta_nginx.outputs.labels }}
           cache-from: type=gha
