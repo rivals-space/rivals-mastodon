@@ -9,17 +9,23 @@ on:
     branches:
       - 'main'
 jobs:
-  docker:
+  mastodon-docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Docker meta
-        id: meta
+      - name: Docker meta Mastodon
+        id: meta_mastodon
         uses: docker/metadata-action@v4
         with:
           images: |
             ghcr.io/rivals-space/rivals-mastodon
+      - name: Docker meta Nginx
+        id: meta_nginx
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/rivals-space/rivals-nginx
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -31,13 +37,29 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
+      - name: Build and push Mastodon
         uses: docker/build-push-action@v3
         with:
           context: .
+          target: prod
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta_mastodon.outputs.tags }}
+          labels: ${{ steps.meta_mastodon.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Build and push Nginx
+        uses: docker/build-push-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          context: .
+          file: .docker/nginx/Dockerfile
+          build-args: |
+            MASTODON_CONTAINER=${{ steps.meta_mastodon.outputs.tags }}
+          target: nginx
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta_nginx.outputs.tags }}
+          labels: ${{ steps.meta_nginx.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
