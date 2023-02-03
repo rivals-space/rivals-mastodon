@@ -54,7 +54,7 @@ const dbUrlToConfig = (dbUrl) => {
   const ssl = params.query && params.query.ssl;
 
   if (ssl && ssl === 'true' || ssl === '1') {
-    config.ssl = {rejectUnauthorized: false};
+    config.ssl = true;
   }
 
   return config;
@@ -141,20 +141,15 @@ const startWorker = async (workerId) => {
   };
 
   if (!!process.env.DB_SSLMODE && process.env.DB_SSLMODE !== 'disable') {
-    pgConfigs.development.ssl = {rejectUnauthorized: false};
-    pgConfigs.production.ssl = {rejectUnauthorized: false};
+    pgConfigs.development.ssl = true;
+    pgConfigs.production.ssl = true;
   }
 
   const app = express();
 
   app.set('trust proxy', process.env.TRUSTED_PROXY_IP ? process.env.TRUSTED_PROXY_IP.split(/(?:\s*,\s*|\s+)/) : 'loopback,uniquelocal');
 
-  const pgPool = new pg.Pool(Object.assign(pgConfigs[env], dbUrlToConfig(process.env.DATABASE_URL), {
-    max: process.env.DB_POOL || 10,
-    connectionTimeoutMillis: 15000,
-    ssl: {rejectUnauthorized: false},
-  }));
-
+  const pgPool = new pg.Pool(Object.assign(pgConfigs[env], dbUrlToConfig(process.env.DATABASE_URL)));
   const server = http.createServer(app);
   const redisNamespace = process.env.REDIS_NAMESPACE || null;
 
@@ -863,15 +858,6 @@ const startWorker = async (workerId) => {
     res.write('# TYPE connected_channels gauge\n');
     res.write('# HELP connected_channels The number of Redis channels the streaming server is subscribed to\n');
     res.write(`connected_channels ${Object.keys(subs).length}.0\n`);
-    res.write('# TYPE pg_pool_total_connections gauge\n');
-    res.write('# HELP pg_pool_total_connections The total number of clients existing within the pool\n');
-    res.write(`pg_pool_total_connections ${pgPool.totalCount}.0\n`);
-    res.write('# TYPE pg_pool_idle_connections gauge\n');
-    res.write('# HELP pg_pool_idle_connections The number of clients which are not checked out but are currently idle in the pool\n');
-    res.write(`pg_pool_idle_connections ${pgPool.idleCount}.0\n`);
-    res.write('# TYPE pg_pool_waiting_queries gauge\n');
-    res.write('# HELP pg_pool_waiting_queries The number of queued requests waiting on a client when all clients are checked out\n');
-    res.write(`pg_pool_waiting_queries ${pgPool.waitingCount}.0\n`);
     res.write('# EOF\n');
     res.end();
   }));
