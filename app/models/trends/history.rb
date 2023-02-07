@@ -87,7 +87,7 @@ class Trends::History
   end
 
   def each(&block)
-    if block
+    if block_given?
       (0...7).map { |i| yield(get(i.days.ago)) }
     else
       to_enum(:each)
