@@ -54,7 +54,7 @@ const dbUrlToConfig = (dbUrl) => {
   const ssl = params.query && params.query.ssl;
 
   if (ssl && ssl === 'true' || ssl === '1') {
-    config.ssl = true;
+    config.ssl = {rejectUnauthorized: false};
   }
 
   return config;
@@ -141,8 +141,8 @@ const startWorker = async (workerId) => {
   };
 
   if (!!process.env.DB_SSLMODE && process.env.DB_SSLMODE !== 'disable') {
-    pgConfigs.development.ssl = true;
-    pgConfigs.production.ssl = true;
+    pgConfigs.development.ssl = {rejectUnauthorized: false};
+    pgConfigs.production.ssl = {rejectUnauthorized: false};
   }
 
   const app = express();
@@ -848,6 +848,13 @@ const startWorker = async (workerId) => {
   app.get('/api/v1/streaming/health', (req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('OK');
+  });
+
+  app.get('/status', (req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      'connected_clients' : wss.clients.size,
+    }));
   });
 
   app.use(authenticationMiddleware);

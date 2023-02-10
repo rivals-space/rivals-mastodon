@@ -289,6 +289,18 @@ class LanguageDropdown extends React.PureComponent {
     this.setState({ placement: state.placement });
   };
 
+  setTargetRef = c => {
+    this.target = c;
+  }
+
+  findTarget = () => {
+    return this.target;
+  }
+
+  handleOverlayEnter = (state) => {
+    this.setState({ placement: state.placement });
+  }
+
   render () {
     const { value, intl, frequentlyUsedLanguages } = this.props;
     const { open, placement } = this.state;

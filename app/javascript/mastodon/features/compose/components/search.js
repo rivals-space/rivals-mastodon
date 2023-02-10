@@ -106,6 +106,10 @@ class Search extends React.PureComponent {
     return this.searchForm;
   };
 
+  findTarget = () => {
+    return this.searchForm;
+  }
+
   render () {
     const { intl, value, submitted } = this.props;
     const { expanded } = this.state;
