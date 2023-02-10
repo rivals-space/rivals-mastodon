@@ -54,7 +54,7 @@ const dbUrlToConfig = (dbUrl) => {
   const ssl = params.query && params.query.ssl;
 
   if (ssl && ssl === 'true' || ssl === '1') {
-    config.ssl = true;
+    config.ssl = {rejectUnauthorized: false};
   }
 
   return config;
@@ -127,6 +127,7 @@ const startWorker = async (workerId) => {
       database: process.env.DB_NAME || 'mastodon_development',
       host:     process.env.DB_HOST || pg.defaults.host,
       port:     process.env.DB_PORT || pg.defaults.port,
+      max:      10,
     },
 
     production: {
@@ -135,8 +136,14 @@ const startWorker = async (workerId) => {
       database: process.env.DB_NAME || 'mastodon_production',
       host:     process.env.DB_HOST || 'localhost',
       port:     process.env.DB_PORT || 5432,
+      max:      10,
     },
   };
+
+  if (!!process.env.DB_SSLMODE && process.env.DB_SSLMODE !== 'disable') {
+    pgConfigs.development.ssl = {rejectUnauthorized: false};
+    pgConfigs.production.ssl = {rejectUnauthorized: false};
+  }
 
   const app = express();
 
@@ -145,7 +152,7 @@ const startWorker = async (workerId) => {
   const pgPool = new pg.Pool(Object.assign(pgConfigs[env], dbUrlToConfig(process.env.DATABASE_URL), {
     max: process.env.DB_POOL || 10,
     connectionTimeoutMillis: 15000,
-    ssl: !!process.env.DB_SSLMODE && process.env.DB_SSLMODE !== 'disable',
+    ssl: {rejectUnauthorized: false},
   }));
 
   const server = http.createServer(app);
