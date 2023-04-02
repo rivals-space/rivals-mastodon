@@ -1396,10 +1396,6 @@
         "id": "navigation_bar.lists"
       },
       {
-        "defaultMessage": "Followed hashtags",
-        "id": "navigation_bar.followed_tags"
-      },
-      {
         "defaultMessage": "Blocked users",
         "id": "navigation_bar.blocks"
       },
